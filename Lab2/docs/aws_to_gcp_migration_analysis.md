@@ -1,6 +1,6 @@
 # AWS to GCP Migration Analysis & Proposal
 **Customer**: Cymbal Group - AdServer Production Migration Team  
-**Lab Code**: 1.4 (Module 1 - Phase 4)  
+**Lab Code**: 1.4 (Lab 2)  
 **Source Infrastructure File**: [aws_environment.json](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab2/data/aws_environment.json)
 
 ---

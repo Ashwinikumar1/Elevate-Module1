@@ -1,5 +1,5 @@
 # Complete Lab Documentation & Scoring Guide
-**Module**: Module 1 - Phase 4 (Lab 1.4)  
+**Module**: Lab 2 (Lab 1.4)  
 **Target GCP Project**: `alpha-code-461805`  
 **Region**: `us-east1`  
 **Status**: Completed & Verified  

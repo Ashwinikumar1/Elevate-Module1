@@ -1,0 +1,16 @@
+[project]
+name = "cymbal-navigation-planner"
+version = "0.4.0"
+description = "Lab 3: Cymbal Navigation & Planner Agent for Google Search and Google Maps integration"
+dependencies = [
+    "google-adk>=0.4.0",
+    "google-genai>=0.1.1",
+    "google-cloud-aiplatform>=1.70.0",
+    "requests>=2.31.0",
+    "pydantic>=2.0.0",
+]
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

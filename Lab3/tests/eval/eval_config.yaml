@@ -1,0 +1,24 @@
+metrics_to_run:
+  - multi_turn_task_success
+  - multi_turn_tool_use_quality
+  - multi_turn_trajectory_quality
+  - final_response_quality
+  - hallucination
+  - navigation_accuracy_judge
+
+custom_metrics:
+  - name: navigation_accuracy_judge
+    prompt_template: |
+      Assess whether the agent correctly retrieved information from Google Search or Google Maps tools,
+      and whether the navigation instructions and place details provided to the user are complete and helpful.
+      
+      User Prompt: {prompt}
+      Agent Response: {response}
+      Agent Execution Trace: {agent_data}
+      
+      Score 1 to 5:
+      1 - Irrelevant or missing answers; tools not invoked.
+      3 - Partially answered; missing distance or address details.
+      5 - Perfectly complete; search/maps tools properly used and concise directions provided.
+      
+      Return JSON: {"score": <1|2|3|4|5>, "explanation": "<rationale>"}

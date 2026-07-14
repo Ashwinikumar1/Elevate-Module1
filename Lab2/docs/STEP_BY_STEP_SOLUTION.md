@@ -1,5 +1,5 @@
 # Step-by-Step Deployment Guide & Solution Document
-**Lab Title**: Module 1 - Phase 4 (Lab Code: 1.4)  
+**Lab Title**: Lab 2 (Lab Code: 1.4)  
 **Target GCP Project**: `alpha-code-461805`  
 **Region**: `us-east1`  
 

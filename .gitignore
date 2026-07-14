@@ -17,3 +17,11 @@ yarn-error.log*
 *.tfstate.backup
 *.tfvars
 .terraform.lock.hcl
+
+# Python & Agent CLI
+.venv/
+__pycache__/
+*.pyc
+.agents-cli-scripts/
+*.log
+

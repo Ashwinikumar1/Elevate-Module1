@@ -1,0 +1,37 @@
+{
+  "eval_cases": [
+    {
+      "eval_case_id": "web_search_and_navigation",
+      "prompt": {
+        "role": "user",
+        "parts": [
+          {
+            "text": "What major tech conferences are happening in San Francisco soon, and how do I get to Moscone Center from SFO airport?"
+          }
+        ]
+      }
+    },
+    {
+      "eval_case_id": "place_details_and_route",
+      "prompt": {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Look up the address and rating for Moscone Center using Google Maps, then give me driving directions from Oakland."
+          }
+        ]
+      }
+    },
+    {
+      "eval_case_id": "multi_mode_navigation",
+      "prompt": {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Provide transit directions from SFO Airport to Moscone Center, including estimated travel duration."
+          }
+        ]
+      }
+    }
+  ]
+}

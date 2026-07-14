@@ -1,0 +1,9 @@
+name: cymbal_navigation_planner
+version: 0.4.0
+framework: adk
+language: python
+deployment_target: agent_runtime
+region: us-central1
+agent_directory: cymbal_navigation_agent
+session_type: agent_platform_sessions
+description: Cymbal Navigation & Planner Agent for Google Search and Google Maps integration.

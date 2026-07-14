@@ -1,8 +1,11 @@
 # Module 1: GCP Infrastructure Migration & Application Modernization
 
-Welcome to **Module 1** of Project Elevate. This repository contains the complete codebase, infrastructure templates, step-by-step student guides, and evaluation tools for **Lab 1** and **Lab 2**.
+Welcome to **Module 1** of Project Elevate. This repository contains the complete codebase, infrastructure templates, step-by-step student guides, and evaluation tools for **Lab 1**, **Lab 2**, and **Lab 3**.
+
+> 🎓 **CE Curriculum Guide**: For a strategic explanation of how these 3 labs connect Module 0 (Foundations), Module 1 (Applied Competency), and Advanced Multi-Agent Modules for Customer Engineers, read **[MODULE1_CE_CURRICULUM_OVERVIEW.md](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/MODULE1_CE_CURRICULUM_OVERVIEW.md)**.
 
 ---
+
 
 ## 📂 Repository Taxonomy
 
@@ -31,7 +34,16 @@ Module1/
         ├── main.tf
         ├── deploy.sh
         └── verify.sh                      <-- Automated Grading & Evaluation Test Suite
+
+└── 📁 Lab3/                           <-- Lab 3: Cymbal Navigation Agent Evaluation, Deployment & Publishing
+    ├── README.md                          <-- Lab 3 Overview & Task Summary
+    ├── STUDENT_LAB_GUIDE.md               # Primary Exhaustive Student Guide & Rubric
+    ├── scripts/preflight_check.sh         # GCP Auth & Service API verification script
+    ├── skills/                            # Agentic Skills Directory (evaluation, deployment, publish, observability)
+    ├── cymbal_navigation_agent/           # Core Customer Agent Package
+    └── tests/eval/                        # ADK Evaluation Datasets & Metrics Config
 ```
+
 
 ---
 
@@ -44,15 +56,26 @@ Module1/
 - Enforce IAM least-privilege access for cloud resources.
 
 ### 📚 Documents to Refer To for Lab 1
-1. **[Lab 1 Setup Guide](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab1/docs/lab_setup_guide.md)**: Environment preparation, Node.js runtime setup, and GCP authentication.
-2. **[Lab 1 Assignment](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab1/docs/lab_assignment.md)**: Step-by-step task requirements and container building procedures.
-3. **[Lab 1 Readme](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab1/docs/README.md)**: Architectural overview of the sample HR Vacation service.
+1. **[Lab 1 Student Lab Execution Guide](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab1/docs/STUDENT_LAB_GUIDE.md)** (**START HERE FOR PHASE 2 OUTAGE REMEDIATION**): Diagnosing & Remediating Multi-Region Cloud Infrastructure Outages via Agentic AI Tooling.
+2. **[Lab 1 Setup Guide](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab1/docs/lab_setup_guide.md)**: Environment preparation, Node.js runtime setup, and GCP authentication.
+3. **[Lab 1 Assignment](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab1/docs/lab_assignment.md)**: Step-by-step task requirements and container building procedures.
+4. **[Lab 1 Readme](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab1/docs/README.md)**: Architectural overview of the sample HR Vacation service.
+
 
 ### ⚡ Quick Start for Lab 1
 ```bash
+# 1. Provision baseline infrastructure
 cd Lab1/terraform
+terraform apply -auto-approve
+
+# 2. Deploy Cloud Run services
 bash deploy.sh
+
+# 3. Run Automated Verification & Grading Suite
+cd ..
+bash verify.sh
 ```
+
 
 ---
 
@@ -82,6 +105,38 @@ terraform apply -var="gcp_project_id=YOUR_PROJECT_ID" -var="gcp_region=us-east1"
 # 3. Run Automated Grader
 bash verify.sh
 ```
+
+---
+
+## 🤖 Lab 3 Overview: Cymbal Navigation Agent Evaluation, Deployment & Publishing
+
+### 🎯 What You Will Learn
+- Verify GCP preflight authentication & service API status (`aiplatform`, `cloudresourcemanager`, `iam`, `logging`, `monitoring`, `bigquery`, `discoveryengine`).
+- Test customer-provided ADK agent code locally using `agents-cli run` and `agents-cli playground`.
+- Execute the ADK Quality Flywheel evaluation framework (`evalset.json` & `eval_config.yaml`).
+- Deploy agent to managed Vertex AI Agent Runtime (Reasoning Engine) with global model handling and BigQuery Telemetry.
+- Programmatically register reasoning engine endpoints into Gemini Enterprise.
+- Audit 4-tier enterprise observability (Cloud Trace, Prompt-Response Logging, BigQuery Agent Analytics, Third-Party Telemetry).
+
+### 📚 Documents to Refer To for Lab 3
+1. **[Student Lab Guide](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab3/STUDENT_LAB_GUIDE.md)** (**START HERE**): Exhaustive step-by-step student instructions, rubric, and task walkthroughs.
+2. **[Lab 3 Readme](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab3/README.md)**: Architectural overview and quick reference commands.
+
+### ⚡ Quick Start for Lab 3
+```bash
+# 1. Navigate to Lab 3 directory
+cd Lab3
+
+# 2. Run GCP Preflight Check
+bash scripts/preflight_check.sh
+
+# 3. Execute ADK Evaluation
+agents-cli eval run --config tests/eval/eval_config.yaml
+
+# 4. Deploy to Vertex AI Agent Runtime
+agents-cli deploy --deployment-target agent_runtime --no-confirm-project --bq
+```
+
 
 ---
 

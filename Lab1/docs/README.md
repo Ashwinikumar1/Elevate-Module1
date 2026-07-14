@@ -1,8 +1,11 @@
 # HR Vacation Request Subsystem - Interactive Classroom Simulator
 
-Welcome to the **Vacation Request Subsystem** lab application! This repository contains a fully containerized, interactive web simulator designed for students and system architects to learn about Google Cloud Platform (GCP) private network designs, relational vs. NoSQL transaction patterns, and high-availability mitigation strategies.
+Welcome to the **Vacation Request Subsystem** lab application! This repository contains a fully containerized, interactive web simulator and multi-region infrastructure remediation scenario.
 
----
+> 📖 **Primary Student Guides**:
+> * **[Lab 1 Student Lab Guide (Outage Remediation)](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab1/docs/STUDENT_LAB_GUIDE.md)**: Diagnosing & Remediating Multi-Region Cloud Infrastructure Outages via Agentic AI Tooling.
+> * **[Lab Setup Guide](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab1/docs/lab_setup_guide.md)**: Local environment preparation and GCP authentication.
+
 
 ## 📖 Scenario Overview
 
@@ -188,4 +191,22 @@ resource "google_sql_database_instance" "replica_europe" {
 1. Apply the updated Terraform configuration (`terraform apply`).
 2. Verify that GCLB forwards traffic to both `us-central1` and `europe-west1` based on user location.
 3. Access the portal and inspect the simulated terminal logs. Confirm that Central IAP identity verification remains unified across all entry nodes while requests are routed locally!
+
+---
+
+## 🧪 Automated Grading & Verification Suite
+
+To run automated verification and score your Lab 1 deployment and remediation:
+
+```bash
+bash verify.sh
+```
+
+The grading script evaluates:
+* Active `gcloud` context and project scope.
+* `hr-vacation-app-us` in `us-central1` status (25 Points).
+* `hr-vacation-app-eu` in `europe-west1` status (25 Points).
+* Regional Routing `DB_READ_HOST` configuration (25 Points).
+* Cloud Run hotfix revision deployment status (25 Points).
+
 
