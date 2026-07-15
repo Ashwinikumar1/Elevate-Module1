@@ -99,6 +99,9 @@ Use your Agentic AI IDE or CLI to inspect and summarize `Lab2/data/aws_environme
 #### Example AI Prompt:
 > *"Analyze `Lab2/data/aws_environment.json`. Identify all AWS compute, network, container, storage, and key management resources. Extract VPC CIDR blocks, instance machine types, EKS cluster names, and S3 bucket identifiers."*
 
+#### Expected Output & Reference Deliverable Link:
+* 📄 **Technical AWS Baseline Analysis**: [docs/aws_to_gcp_migration_analysis.md](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab2/docs/aws_to_gcp_migration_analysis.md)
+
 #### Extracted AWS Environment Baseline:
 * **VPC Network**: AWS VPC (`10.17.0.0/16`) across two Availability Zones (`us-east-1a`, `us-east-1b`).
 * **Container Cluster**: AWS EKS Cluster (`adserver1-prd`) running node pool `c5.large`.
@@ -110,7 +113,15 @@ Use your Agentic AI IDE or CLI to inspect and summarize `Lab2/data/aws_environme
 
 Use your Agentic AI assistant to create standard technical comparison documents and diagrams for Cymbal Group leadership.
 
-#### Required Deliverable Documents:
+#### Example AI Prompt:
+> *"Using the baseline from `Lab2/data/aws_environment.json`, generate a complete cross-cloud technical comparison mapping AWS primitives to GCP native equivalents. Create logical architecture diagrams in Mermaid format illustrating the AWS 'As-Is' vs GCP 'To-Be' perimeters, and produce an executive TCO value proposition document detailing why GCP is superior for Cymbal Direct's adserver1-prd stack."*
+
+#### Expected Output & Reference Deliverable Links:
+1. 📊 **Resource Group Mapping Comparison**: [docs/aws_to_gcp_migration_analysis.md (Section 2)](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab2/docs/aws_to_gcp_migration_analysis.md#2-aws-to-gcp-resource-mapping-matrix)
+2. 📐 **Logical Architecture Diagrams**: [docs/aws_to_gcp_migration_analysis.md (Section 3)](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab2/docs/aws_to_gcp_migration_analysis.md#3-logical-architecture-diagrams)
+3. 💼 **Value Proposition & TCO Analysis**: [docs/gcp_value_proposition_analysis.md](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab2/docs/gcp_value_proposition_analysis.md)
+
+#### Required Deliverable Specifications:
 1. **Resource Group Mapping Comparison**: Document a comprehensive comparison mapping each AWS resource group primitive to its GCP equivalent:
    - AWS VPC ➔ GCP Private VPC (`google_compute_network`) & Custom Subnets (`google_compute_subnetwork`).
    - AWS EKS Cluster ➔ GCP GKE Standard Private Cluster (`google_container_cluster`).
@@ -126,6 +137,13 @@ Use your Agentic AI assistant to create standard technical comparison documents 
 
 Using your Agentic AI assistant, generate a complete reference set of production-grade, modular Terraform code in `Lab2/terraform/` that complies with all Altostrat organization security rules.
 
+#### Example AI Prompt:
+> *"Generate production-grade Terraform code in `Lab2/terraform/main.tf` mapping the AWS `adserver1-prd` workload to GCP. Enforce Altostrat organization security constraints: private GKE cluster (`enable_private_nodes = true`), node pool Secure Boot (`enable_secure_boot = true`), GCS bucket with uniform access and Cloud KMS customer-managed key encryption, and explicit IAM role bindings (`roles/cloudkms.cryptoKeyEncrypterDecrypter`) for GKE and Cloud Storage service agents."*
+
+#### Expected Output & Reference Deliverable Links:
+1. 🏗️ **Org-Policy Compliant Terraform Configuration**: [terraform/main.tf](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab2/terraform/main.tf)
+2. 📝 **Terraform Step-by-Step Walkthrough**: [docs/STEP_BY_STEP_SOLUTION.md](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab2/docs/STEP_BY_STEP_SOLUTION.md)
+
 #### Infrastructure Specifications to Include in `main.tf`:
 - **VPC & Subnets**: Custom VPC network with private subnets in `us-east1`.
 - **Private GKE Cluster**: Cluster `adserver1-prd` with `private_cluster_config { enable_private_nodes = true }`.
@@ -138,6 +156,14 @@ Using your Agentic AI assistant, generate a complete reference set of production
 ### Task 4: Deploy Reference GCP Infrastructure to Google Cloud
 
 Deploy the generated GCP reference configuration to Google Cloud.
+
+#### Example AI Prompt:
+> *"Execute `gcloud auth application-default login`, navigate to `Lab2/terraform`, initialize Terraform, plan, and apply the configuration with GCP project ID `alpha-code-461805` and region `us-east1` to provision the private GKE cluster and encrypted storage infrastructure."*
+
+#### Expected Output & Reference Deliverable Links:
+1. 🚀 **Infrastructure Deployment Walkthrough**: [docs/STEP_BY_STEP_SOLUTION.md (Section 3)](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab2/docs/STEP_BY_STEP_SOLUTION.md#step-3-deploy-gcp-reference-infrastructure)
+2. 🧪 **Automated Verification Script**: [terraform/verify.sh](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab2/terraform/verify.sh)
+3. 📊 **Deployment & Evaluation Verification Report**: [docs/lab_deployment_solution_report.md](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab2/docs/lab_deployment_solution_report.md)
 
 #### Step 4.1: Initialize & Configure Environment
 ```bash
@@ -174,10 +200,17 @@ bash verify.sh
 
 ### Task 5: Generate Tailored Proposal via Migration Center AI
 
-Use GCP Console Migration Center AI tools or Agentic prompts to generate a custom executive business proposal for Cymbal Group leadership:
+Use GCP Console Migration Center AI tools or Agentic prompts to generate a custom executive business proposal for Cymbal Group leadership.
+
+#### Example AI Prompt:
+> *"Using GCP Migration Center AI assessment features and context from `Lab2/data/aws_environment.json`, generate an executive migration business proposal for Cymbal Group leadership highlighting modernizing AWS `adserver1-prd` to GCP Private GKE, Cloud KMS encryption, operational efficiency gains, and ROI."*
+
+#### Expected Output & Reference Deliverable Link:
+* 💼 **Executive Migration Business Proposal**: [docs/gcp_value_proposition_analysis.md](file:///Users/ashwinikm/Desktop/Project_Elevate/projectelevate-module1/Lab2/docs/gcp_value_proposition_analysis.md)
+
+#### Step-by-Step Instructions:
 1. Navigate to **GCP Console ➔ Migration Center**.
-2. Run AI proposal generator or prompt Agentic assistant:
-   > *"Generate an executive migration business proposal for Cymbal Group detailing modernizing AWS adserver1-prd to GCP GKE Private Cluster with Cloud KMS encryption."*
+2. Run AI proposal generator or prompt Agentic assistant with the executive prompt above.
 
 ---
 
