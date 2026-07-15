@@ -179,10 +179,10 @@ resource "google_container_node_pool" "main_node_pool" {
     }
 
     labels = {
-      "Cluster"              = "adserver1-prd"
-      "NodeGroup"            = "main"
-      "ex.co/is_primary"     = "true"
-      "Environment"          = var.environment
+      "Cluster"          = "adserver1-prd"
+      "NodeGroup"        = "main"
+      "ex.co/is_primary" = "true"
+      "Environment"      = var.environment
     }
 
     tags = ["gke-node", "adserver1-prd-node"]

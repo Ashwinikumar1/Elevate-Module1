@@ -1,151 +1,89 @@
-# Coursework: Upgrading to Multi-Region Load Balancing
-**Module 1: Advanced GCP Architectures — Highly Available & Latency-Optimized Topologies**
+# Lab 1 Coursework: Modernizing GCP Workloads via Agentic Tools
+**Module 1 - Phase 1: High Availability, Global Routing & Latency Optimization**
 
 ## Objective
-In this assignment, you will upgrade your baseline single-region HR Vacation Request subsystem into a highly available, latency-optimized Multi-Regional topology. You will deploy a second frontend instance in Europe, configure Anycast routing via the Global Load Balancer, and set up cross-region Cloud SQL Postgres replication with Cloud DNS abstraction.
+In this hands-on lab assignment, you will modernize Cymbal Group's single-region HR Vacation Request subsystem into a highly available, latency-optimized multi-region architecture. You will use Agentic AI tools (VS Code Antigravity Plugin, Antigravity CLI, Google Agent Skills, MCP) to analyze existing code, process customer meeting feedback, apply declarative Terraform IaC for primary region resources, imperatively deploy secondary region resources via CLI tool calling, and execute automated failover verification.
 
 ---
 
-## Assignment Tasks
+## Assignment Tasks & AI Pair-Programming Prompts
 
-### Step 1: Declare a Second Regional Cloud Run Frontend Service
-In `terraform/main.tf`, declare a new regional Cloud Run frontend service in a second region (e.g., `europe-west1`):
-
-```hcl
-resource "google_cloud_run_v2_service" "frontend_europe" {
-  name     = "hr-vacation-frontend-europe"
-  location = "europe-west1"
-  ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
-
-  template {
-    containers {
-      image = "${var.region}-docker.pkg.dev/${local.project_id}/${google_artifact_registry_repository.app_repo.repository_id}/frontend:latest"
-      ports {
-        container_port = 8080
-      }
-      env {
-        name  = "BACKEND_API_URL"
-        value = google_cloud_run_v2_service.backend_service.uri
-      }
-    }
-  }
-}
-```
+### Step 1: Discover Workload & Generate Baseline Topology Docs
+Use your Agentic AI IDE to analyze `Lab1/assignment_code`. Generate `docs/baseline_summary.md` and `docs/baseline_architecture.mermaid` detailing the initial single-region footprint.
 
 > [!NOTE]
 > **AI Pair-Programming Prompt**:
 > ```text
-> In `terraform/main.tf`, declare a new Google Cloud Run v2 service named `frontend_europe` (service name "hr-vacation-frontend-europe") in region `europe-west1`. It should use the same container configuration, image registry repository, and env variables as `google_cloud_run_v2_service.frontend_service` but set the ingress property to INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER.
+> Analyze the single-region codebase and infrastructure templates in Lab1/assignment_code. Create two documentation artifacts in the docs/ folder:
+> 1. docs/baseline_summary.md: Documenting all Google Cloud components (Cloud Run, Cloud SQL, Firestore, VPC), their service dependencies, and single-region SPOF risks.
+> 2. docs/baseline_architecture.mermaid: A Mermaid flowchart representing the initial single-region application topology.
 > ```
 
 ---
 
-### Step 2: Create a European Serverless NEG
-Define a regional serverless Network Endpoint Group (NEG) targeting the new European Cloud Run frontend service:
-
-```hcl
-resource "google_compute_region_network_endpoint_group" "serverless_neg_europe" {
-  name                  = "hr-vacation-neg-europe"
-  network_endpoint_type = "SERVERLESS"
-  region                = "europe-west1"
-  cloud_run {
-    service = google_cloud_run_v2_service.frontend_europe.name
-  }
-}
-```
+### Step 2: Analyze Customer Requirements & Create Target Architecture Blueprint
+Ingest `docs/customer_requirements.md` and extract Cymbal Group's resiliency directives. Generate `docs/updated_summary.md` and `docs/updated_architecture.mermaid`.
 
 > [!NOTE]
 > **AI Pair-Programming Prompt**:
 > ```text
-> Write a Terraform resource block for a regional serverless network endpoint group named `serverless_neg_europe` (NEG name "hr-vacation-neg-europe") in `europe-west1`. Configure it to target the new Cloud Run service `google_cloud_run_v2_service.frontend_europe`.
+> Read docs/customer_requirements.md. Synthesize the latency, availability, caching, and failover requirements from the customer meeting transcript into:
+> 1. docs/updated_summary.md: Outlining enhancements including cross-region Cloud SQL replica, multi-region Firestore, Memorystore for Redis caching, and GCLB Anycast routing.
+> 2. docs/updated_architecture.mermaid: A Mermaid diagram depicting symmetric Cloud Run deployment across us-central1 and europe-west1 with Anycast global load balancing.
 > ```
 
 ---
 
-### Step 3: Register Both Regional NEGs to the Backend Service
-Update the existing Load Balancer backend service (`google_compute_backend_service.backend_service`) in `main.tf` to route traffic to both the US and Europe NEGs. GCLB will automatically direct clients to the nearest region using Anycast IP routing:
-
-```hcl
-resource "google_compute_backend_service" "backend_service" {
-  name                  = "hr-vacation-backend-service"
-  protocol              = "HTTP"
-  port_name             = "http"
-  load_balancing_scheme = "EXTERNAL_MANAGED"
-
-  # Primary US Backend NEG
-  backend {
-    group = google_compute_region_network_endpoint_group.serverless_neg.id
-  }
-
-  # Failover / Latency-Optimized Europe Backend NEG
-  backend {
-    group = google_compute_region_network_endpoint_group.serverless_neg_europe.id
-  }
-}
-```
+### Step 3: Declarative Infrastructure Modernization (Terraform)
+Refactor `terraform/main.tf` to provision foundational VPC networking, Cloud SQL Primary PostgreSQL, Multi-Region Firestore, and a Memorystore for Redis caching instance in `us-central1`. Apply the configuration declaratively.
 
 > [!NOTE]
 > **AI Pair-Programming Prompt**:
 > ```text
-> Update the `google_compute_backend_service.backend_service` resource in `terraform/main.tf` by adding a second `backend` block that references the new European serverless NEG ID: `google_compute_region_network_endpoint_group.serverless_neg_europe.id`.
+> Update terraform/main.tf to include a google_redis_instance resource named "cache" in us-central1 connected to the private VPC network. Configure the Firestore database for multi-region mode (location_id = "nam5"). Initialize and apply the Terraform plan.
 > ```
 
 ---
 
-### Step 4: Configure Cross-Region Cloud SQL Replication & Private DNS
-To ensure low-latency reads in Europe and high availability, configure a Cloud SQL Read Replica in `europe-west1`.
-
-1. **Declare the Cloud SQL Read Replica** in `main.tf`:
-   ```hcl
-   resource "google_sql_database_instance" "postgres_replica" {
-     name                 = "hr-vacation-sql-db-replica"
-     database_version     = "POSTGRES_15"
-     region               = "europe-west1"
-     master_instance_name = google_sql_database_instance.postgres.name
-
-     settings {
-       tier = "db-f1-micro"
-       ip_configuration {
-         ipv4_enabled    = false
-         private_network = google_compute_network.vpc_network.id
-       }
-     }
-   }
-   ```
-
-2. **Map Private DNS Records** inside Cloud DNS to provide database host abstractions:
-   ```hcl
-   # Map DB_WRITE_HOST: write-db.hr-vacation.internal -> Primary Cloud SQL Private IP
-   resource "google_dns_record_set" "write_dns" {
-     name         = "write-db.hr-vacation.internal."
-     managed_zone = google_dns_managed_zone.private_zone.name
-     type         = "A"
-     ttl          = 60
-     rrdatas      = [google_sql_database_instance.postgres.private_ip_address]
-   }
-
-   # Map DB_READ_HOST: read-db.hr-vacation.internal -> Replica Cloud SQL Private IP
-   resource "google_dns_record_set" "read_dns" {
-     name         = "read-db.hr-vacation.internal."
-     managed_zone = google_dns_managed_zone.private_zone.name
-     type         = "A"
-     ttl          = 60
-     rrdatas      = [google_sql_database_instance.postgres_replica.private_ip_address]
-   }
-   ```
+### Step 4: Imperative Secondary Region Expansion & Compute Decoupling
+Use imperative tool calling with `gcloud` CLI or Google Cloud MCP services to deploy the secondary region infrastructure in `europe-west1`:
+1. Cloud SQL PostgreSQL Cross-Region Read Replica (`hr-vacation-sql-db-replica`).
+2. Cloud Run Frontend (`hr-vacation-frontend-europe`) and Backend (`hr-vacation-backend-europe`).
+3. Global External Application Load Balancer (GCLB) with Serverless NEGs for `us-central1` and `europe-west1`.
 
 > [!NOTE]
 > **AI Pair-Programming Prompt**:
 > ```text
-> Please write the Terraform configurations for cross-region replication:
-> 1. Add a `google_sql_database_instance` named `postgres_replica` in `europe-west1` linked as a replica to `google_sql_database_instance.postgres`. Enable private IP and set tier to db-f1-micro.
-> 2. Add two `google_dns_record_set` resources named `write_dns` and `read_dns` under the private Cloud DNS zone mapping "write-db.hr-vacation.internal." and "read-db.hr-vacation.internal." to the private IP address of the primary and replica Cloud SQL instances respectively.
+> Execute imperative gcloud CLI commands or MCP tool calls to:
+> 1. Provision a Cloud SQL read replica named "hr-vacation-sql-db-replica" in europe-west1 linked to the master instance.
+> 2. Deploy Cloud Run frontend and backend services in europe-west1 connected to local DB_READ_HOST environment variables.
+> 3. Create serverless NEGs in us-central1 and europe-west1 and register them to a Global Application Load Balancer backend service.
+> 4. Record a comparison between declarative IaC and imperative tool calling in docs/imperative_vs_declarative.md.
 > ```
 
 ---
 
-## Verification & Failover Test
-Once applied:
-1. Access the web portal via the DNS address: `https://hr-vacation.gcp-lab.internal`.
-2. Inspect the Live Traffic Visualizer diagram to confirm the addition of the European region.
-3. Simulate a database failover by promoting the Cloud SQL replica in `europe-west1` and updating the Cloud DNS record for `write-db.hr-vacation.internal.` to point to the promoted instance.
+### Step 5: System Resilience Validation & Failover Verification
+Validate the multi-region installation:
+1. Verify global Anycast response latency is <50ms for local queries.
+2. Simulate a region outage in `us-central1` by disabling the primary NEG backend and verifying automatic failover to `europe-west1`.
+3. Run the automated grading suite `bash verify.sh`.
+
+> [!NOTE]
+> **AI Pair-Programming Prompt**:
+> ```text
+> Run curl health probes against the global load balancer endpoint to measure latency. Simulate a regional failure in us-central1 by setting the capacity-scaler of the US serverless NEG to 0.0, confirm zero-downtime failover to europe-west1, and execute bash verify.sh to validate final scoring.
+> ```
+
+---
+
+## Verification & Scoring Rubric
+
+| Requirement | Standard | Points |
+|---|---|---|
+| **Zero Console Policy** | 100% execution via Agentic IDE / CLI / MCP | Pass |
+| **Task 1 Baseline Artifacts** | `baseline_summary.md` & `baseline_architecture.mermaid` (LLM Judge ≥80%) | 20 |
+| **Task 2 Requirement Analysis** | `updated_summary.md` & `updated_architecture.mermaid` (LLM Judge ≥80%) | 20 |
+| **Task 3 Declarative IaC** | Primary region VPC, Cloud SQL, Firestore, Redis created via Terraform | 20 |
+| **Task 4 Imperative Expansion** | Secondary region Cloud Run, SQL Replica & GCLB NEGs deployed via CLI | 20 |
+| **Task 5 Failover Validation** | Latency <50ms and 100% pass rate on `verify.sh` failover test | 20 |

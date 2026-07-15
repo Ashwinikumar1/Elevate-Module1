@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Automated Verification & Grading Script for Lab 1 (Phase 1 & Phase 2 Multi-Region Outage Remediation)
+# Automated Verification & Grading Suite for Lab 1 (Module 1 - Phase 1: Modernizing GCP Workloads via Agentic Tools)
 set -e
 
 echo "============================================================"
 echo "🧪 Starting Lab 1 Automated Verification & Grading Suite"
+echo "   Module 1 - Phase 1: Modernizing GCP Workloads via Agentic Tools"
 echo "============================================================"
 
 # 1. Verify Active GCloud Authentication & Project ID
@@ -18,58 +19,66 @@ echo "📌 GCP Project: $PROJECT_ID"
 SCORE=0
 TOTAL=100
 
-# 2. Check Primary US Cloud Run Service
+# Task 1 Check: Baseline Architecture Documentation
 echo "------------------------------------------------------------"
-echo "🔍 1. Checking US Region Cloud Run Service (us-central1)..."
-US_STATUS=$(gcloud run services describe hr-vacation-app-us --region=us-central1 --format="value(status.conditions[0].status)" 2>/dev/null || true)
+echo "🔍 1. Checking Task 1: Baseline Architecture Documentation..."
+if [ -f "docs/baseline_summary.md" ] && [ -f "docs/baseline_architecture.mermaid" ]; then
+  echo "  ✅ PASS: Task 1 Baseline Documentation artifacts present."
+  SCORE=$((SCORE + 20))
+else
+  echo "  ⚠️  WARNING: Baseline artifacts (docs/baseline_summary.md or docs/baseline_architecture.mermaid) missing."
+fi
+
+# Task 2 Check: Customer Requirements Analysis & Blueprint
+echo "------------------------------------------------------------"
+echo "🔍 2. Checking Task 2: Customer Requirements Analysis..."
+if [ -f "docs/updated_summary.md" ] && [ -f "docs/updated_architecture.mermaid" ]; then
+  echo "  ✅ PASS: Task 2 Target Architecture artifacts present."
+  SCORE=$((SCORE + 20))
+else
+  echo "  ⚠️  WARNING: Target artifacts (docs/updated_summary.md or docs/updated_architecture.mermaid) missing."
+fi
+
+# Task 3 Check: Primary Region Compute & Infrastructure (us-central1)
+echo "------------------------------------------------------------"
+echo "🔍 3. Checking Task 3: Declarative Primary Region Infrastructure (us-central1)..."
+US_STATUS=$(gcloud run services describe hr-vacation-frontend-us --region=us-central1 --format="value(status.conditions[0].status)" 2>/dev/null || gcloud run services describe hr-vacation-app-us --region=us-central1 --format="value(status.conditions[0].status)" 2>/dev/null || true)
 if [ "$US_STATUS" == "True" ]; then
-  echo "  ✅ PASS: US Cloud Run Service (hr-vacation-app-us) is Active."
-  SCORE=$((SCORE + 25))
+  echo "  ✅ PASS: Primary Region Cloud Run Service is Active."
+  SCORE=$((SCORE + 20))
 else
-  echo "  ⚠️  WARNING: US Cloud Run Service (hr-vacation-app-us) is not active or missing."
+  echo "  ⚠️  WARNING: Primary Cloud Run Service (us-central1) is not active or pending."
 fi
 
-# 3. Check Multi-Region European Cloud Run Service
+# Task 4 Check: Imperative Secondary Expansion (europe-west1)
 echo "------------------------------------------------------------"
-echo "🔍 2. Checking EU Region Cloud Run Service (europe-west1)..."
-EU_STATUS=$(gcloud run services describe hr-vacation-app-eu --region=europe-west1 --format="value(status.conditions[0].status)" 2>/dev/null || true)
+echo "🔍 4. Checking Task 4: Imperative Secondary Region Expansion (europe-west1)..."
+EU_STATUS=$(gcloud run services describe hr-vacation-frontend-europe --region=europe-west1 --format="value(status.conditions[0].status)" 2>/dev/null || gcloud run services describe hr-vacation-app-eu --region=europe-west1 --format="value(status.conditions[0].status)" 2>/dev/null || true)
 if [ "$EU_STATUS" == "True" ]; then
-  echo "  ✅ PASS: European Cloud Run Service (hr-vacation-app-eu) is Active."
-  SCORE=$((SCORE + 25))
+  echo "  ✅ PASS: European Cloud Run Service is Active."
+  SCORE=$((SCORE + 20))
 else
-  echo "  ⚠️  WARNING: European Cloud Run Service (hr-vacation-app-eu) is not active or missing."
+  echo "  ⚠️  WARNING: European Cloud Run Service (europe-west1) is missing or incomplete."
 fi
 
-# 4. Check Regional Routing Fix (DB_READ_HOST in europe-west1)
+# Task 5 Check: Global Anycast Load Balancer & Multi-Region Health Checks
 echo "------------------------------------------------------------"
-echo "🔍 3. Checking Regional Routing Misconfiguration Fix..."
-EU_READ_HOST=$(gcloud run services describe hr-vacation-app-eu --region=europe-west1 --format="value(spec.template.spec.containers[0].env)" 2>/dev/null | grep -o 'DB_READ_HOST=[^,]*' | cut -d'=' -f2 || true)
-if [ -n "$EU_READ_HOST" ] && [[ "$EU_READ_HOST" != *"10.100.0.5"* ]]; then
-  echo "  ✅ PASS: European DB_READ_HOST correctly configured ($EU_READ_HOST)."
-  SCORE=$((SCORE + 25))
+echo "🔍 5. Checking Task 5: Global Load Balancing & Resilience..."
+NEG_COUNT=$(gcloud compute network-endpoint-groups list --filter="name~hr-vacation-neg" --format="value(name)" 2>/dev/null | wc -l || echo "0")
+if [ "$NEG_COUNT" -ge 1 ]; then
+  echo "  ✅ PASS: Serverless Network Endpoint Groups verified ($NEG_COUNT NEGs active)."
+  SCORE=$((SCORE + 20))
 else
-  echo "  ❌ FAIL: European DB_READ_HOST is misconfigured ($EU_READ_HOST)."
-  echo "     Must point to local European read replica (e.g. 10.200.0.5 or read-db.hr-vacation.internal)."
-fi
-
-# 5. Check Cloud Run Revision & Container Image Tag
-echo "------------------------------------------------------------"
-echo "🔍 4. Checking Hotfix Revision Deployment..."
-LATEST_REV=$(gcloud run services describe hr-vacation-app-eu --region=europe-west1 --format="value(status.latestReadyRevisionName)" 2>/dev/null || true)
-if [ -n "$LATEST_REV" ]; then
-  echo "  ✅ PASS: Latest active revision ready ($LATEST_REV)."
-  SCORE=$((SCORE + 25))
-else
-  echo "  ❌ FAIL: Latest revision build pending or failed."
+  echo "  ⚠️  WARNING: Serverless NEGs for Global Load Balancing not found."
 fi
 
 echo "============================================================"
 echo "🎯 FINAL LAB 1 SCORE: $SCORE / $TOTAL"
 if [ "$SCORE" -eq 100 ]; then
-  echo "🎉 SUCCESS: Lab 1 Multi-Region Outage Remediation Fully Verified!"
+  echo "🎉 SUCCESS: Lab 1 (Module 1 - Phase 1) Modernization Fully Verified!"
   exit 0
 else
-  echo "⚠️  INCOMPLETE: Review failed checks above and re-run verify.sh."
+  echo "⚠️  INCOMPLETE: Complete missing tasks and re-run verify.sh."
   exit 1
 fi
 echo "============================================================"
