@@ -102,7 +102,7 @@ graph TD
     CloudRunBE -->|Private Connection| Firestore[(Firestore Native Collection: us-central1)]
 ```
 
-> 🤖 **Automated Scoring Check 1**: The lab environment uploads `baseline_summary.md` and `baseline_architecture.mermaid`. An LLM Judge validates that your baseline artifacts match the reference architecture by **at least 80 percent**.
+We will share what good looks like
 
 ---
 
