@@ -83,7 +83,7 @@ Leverage [skills/evaluation/SKILL.md](file:///Users/ashwinikm/Desktop/Project_El
 ```bash
 agents-cli eval run --config tests/eval/eval_config.yaml
 ```
-*Output Report*: `artifacts/docs/step9_eval_report.md`
+*Output Report*: `artifacts/docs/eval_report.md`
 
 ### Task 2: Deploy to Vertex AI Agent Runtime with BigQuery Observability
 Leverage [skills/deployment/SKILL.md](file:///Users/ashwinikm/Desktop/Project_Elevate/lab3_cymbal_navigation_planner/skills/deployment/SKILL.md) to deploy as a Reasoning Engine instance:
@@ -94,7 +94,7 @@ agents-cli deploy \
   --update-env-vars GOOGLE_CLOUD_LOCATION=global,OTEL_TRACES_EXPORTER=gcp_trace,GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY=true \
   --bq
 ```
-*Output Artifacts*: `artifacts/docs/step10_deploy_log.txt` & `artifacts/docs/step10_deploy_report.md`
+*Output Artifacts*: `artifacts/docs/deploy_log.txt` & `artifacts/docs/deploy_report.md`
 
 ### Task 3A: Register Deployed Agent to Gemini Enterprise
 Leverage [skills/publish/SKILL.md](file:///Users/ashwinikm/Desktop/Project_Elevate/lab3_cymbal_navigation_planner/skills/publish/SKILL.md) to register your agent endpoint:
@@ -106,11 +106,11 @@ agents-cli publish gemini-enterprise \
   --display-name "Cymbal Navigation Agent" \
   --description "AI Travel and Navigation Planner powered by Google Search & Google Maps"
 ```
-*Output Artifacts*: `artifacts/docs/step16_publish_log.txt` & `artifacts/docs/step16_publish_report.md`
+*Output Artifacts*: `artifacts/docs/publish_log.txt` & `artifacts/docs/publish_report.md`
 
 ### Task 3B: Verify 4-Tier Enterprise Observability
 Leverage [skills/observability/SKILL.md](file:///Users/ashwinikm/Desktop/Project_Elevate/lab3_cymbal_navigation_planner/skills/observability/SKILL.md) to audit Cloud Trace, Prompt-Response Logging, and BigQuery telemetry.
-*Output Artifacts*: `artifacts/docs/step17_observability_log.txt` & `artifacts/docs/step17_observability_report.md`
+*Output Artifacts*: `artifacts/docs/observability_log.txt` & `artifacts/docs/observability_report.md`
 
 ---
 
